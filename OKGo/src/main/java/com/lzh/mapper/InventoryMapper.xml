@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzh.dao.InventoryDao">
+	<resultMap type="com.lzh.entity.Inventory" id="orders">
+		<id column="invid" property="id"/>
+		<result column="createdtime" property="createdTime"/>
+		<result column="status" property="status"/>
+		<result column="total" property="totalPrice"/>
+		<association property="address" javaType="com.lzh.entity.Address">
+			<id column="adrid" property="id"/>
+			<result column="recipient" property="recipient"/>
+			<result column="address" property="address"/>
+			<result column="phone" property="phone"/>
+			<result column="email" property="email"/>
+		</association>
+		<association property="purchaseUnits" resultMap="purchaseUnits">
+		</association>
+	</resultMap>
+	
+	<resultMap type="com.lzh.entity.PurchaseUnit" id="purchaseUnits">
+		<id column="purid" property="id"/>
+		<result column="amount" property="amount"/>
+		<result column="subtotal" property="totalprice"/>
+		<association property="goods" javaType="com.lzh.entity.Goods">
+			<id column="goodsid" property="id"/>
+			<result column="image" property="image"/>
+			<result column="fullname" property="fullname"/>
+			<result column="price" property="price"/>
+		</association>
+	</resultMap>
+	
+	<resultMap type="com.lzh.entity.Inventory" id="orderMange">
+		<id column="invid" property="id"/>
+		<result column="createdtime" property="createdTime"/>
+		<result column="status" property="status"/>
+		<result column="total" property="totalPrice"/>
+		<association property="address" javaType="com.lzh.entity.Address">
+			<id column="adrid" property="id"/>
+			<result column="recipient" property="recipient"/>
+			<result column="address" property="address"/>
+			<result column="phone" property="phone"/>
+			<result column="email" property="email"/>
+		</association>
+		<association property="user" javaType="com.lzh.entity.User">
+			<id column="uid" property="id"/>
+			<result column="nickname" property="nickname"/>
+		</association>
+	</resultMap>
+	
+	
+	
+	<select id="getAllOrdersByUserid" resultMap="orders" parameterType="int">
+		select 
+			i.id as invid,
+			i.createdtime as createdtime,
+			i.totalprice as total,
+			i.status as status,
+			a.id as adrid,
+			a.recipient as recipient,
+			a.phone as phone,
+			a.address as address,
+			a.email as email,
+			p.id as purid,
+			p.amount as amount,
+			p.totalprice as subtotal,
+			g.id as goodsid,
+			g.image as image,
+			g.fullname as fullname,
+			g.price as price
+			from inventory i
+			inner join address a 
+			on i.addressid=a.id
+			left outer join purchaseunit p
+			on i.id=p.inventoryid
+			inner join goods g
+			on g.id=p.goodsid
+			where i.userid=#{userid}
+	</select>
+	
+	<select id="getOrderDetailById" resultMap="orders">
+		select 
+			i.id as invid,
+			i.createdtime as createdtime,
+			i.totalprice as total,
+			i.status as status,
+			a.id as adrid,
+			a.recipient as recipient,
+			a.phone as phone,
+			a.address as address,
+			a.email as email,
+			p.id as purid,
+			p.amount as amount,
+			p.totalprice as subtotal,
+			g.id as goodsid,
+			g.image as image,
+			g.fullname as fullname,
+			g.price as price
+			from inventory i
+			inner join address a 
+			on i.addressid=a.id
+			left outer join purchaseunit p
+			on i.id=p.inventoryid
+			inner join goods g
+			on g.id=p.goodsid
+			where i.id=#{id}
+	</select>
+	
+	<delete id="delOrderById">
+		delete from inventory where id=#{id}
+	</delete>
+	
+	
+	<select id="getOrderById" resultMap="orderMange">
+		select
+			i.id as invid,
+			i.createdtime as createdtime,
+			i.totalprice as total,
+			i.status as status,
+			a.id as adrid,
+			a.recipient as recipient,
+			a.phone as phone,
+			a.address as address,
+			a.email as email, 
+			u.id, u.nickname from inventory i left outer join address a on i.addressid=a.id left outer join user u on i.userid=u.id where i.id=#{id}
+	</select>	
+	
+	<select id="getAllOrders" resultMap="orderMange">
+		select 
+			i.id as invid,
+			i.createdtime as createdtime,
+			i.totalprice as total,
+			i.status as status,
+			a.id as adrid,
+			a.recipient as recipient,
+			a.phone as phone,
+			a.address as address,
+			a.email as email,
+			u.id, u.nickname from inventory i left outer join address a on i.addressid=a.id left outer join user u on i.userid=u.id limit #{0}, #{1}
+	</select>	
+	
+	<select id="getOrdersByUserid" resultMap="orderMange">
+		select 
+			i.id as invid,
+			i.createdtime as createdtime,
+			i.totalprice as total,
+			i.status as status,
+			a.id as adrid,
+			a.recipient as recipient,
+			a.phone as phone,
+			a.address as address,
+			a.email as email,
+			u.id, u.nickname from inventory i left outer join address a on i.addressid=a.id left outer join user u on i.userid=u.id where i.userid=#{0} limit #{1}, #{2}
+	</select>
+
+	<select id="getTotalCount" resultType="int">
+		select count(*) from inventory i 
+	</select>
+	
+	<select id="getCountByUserid" resultType="int">
+		select count(*) from inventory i where i.userid=#{userid}
+	</select>
+
+	<insert id="insert" parameterType="com.lzh.entity.Inventory">
+		insert into inventory(id, userid, createdtime, totalprice, status, addressid) values(#{id}, #{userid}, #{createdTime}, #{totalPrice}, #{status}, #{addressid})
+	</insert>
+	
+	<update id="updateOrderStatus">
+		update inventory i set i.status=#{0} where i.id=#{1}
+	</update>
+	
+</mapper>

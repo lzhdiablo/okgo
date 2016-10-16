@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzh.dao.AdminDao">
+
+	<select id="getAdminByNameAndPsw" resultType="com.lzh.entity.Admin">
+		select a.* from admin a where a.name=#{0} and a.password=#{1}
+	</select>
+	
+	<update id="updateAdmin" parameterType="com.lzh.entity.Admin">
+		update admin a set a.name=#{name}, a.password=#{password} where a.id=#{id}
+	</update>
+</mapper>

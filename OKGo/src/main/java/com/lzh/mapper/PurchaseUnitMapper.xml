@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzh.dao.PurchaseUnitDao">
+	
+	<insert id="insert" parameterType="com.lzh.entity.PurchaseUnit">
+		insert into purchaseunit(inventoryid, goodsid, amount, totalprice) values(#{inventoryid}, #{goodsid}, #{amount}, #{totalprice})
+	</insert>
+	
+	<delete id="delPurchaseUnitByInventoryId">
+		delete from purchaseunit where inventoryid=#{id}
+	</delete>
+</mapper>

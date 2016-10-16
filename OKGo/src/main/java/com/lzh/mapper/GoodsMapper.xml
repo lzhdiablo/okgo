@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzh.dao.GoodsDao">
+
+	<insert id="saveGoods" parameterType="com.lzh.entity.Goods">
+		insert into goods(image, fullname, price, stock, lowertag, middletag, uppertag) 
+		values(#{image}, #{fullname}, #{price}, #{stock}, #{lowerTag}, #{middleTag}, #{upperTag})
+	</insert>
+
+	<select id="getTotalCount" resultType="int">
+		select count(*) from goods g where g.fullname like "%"#{goodsname}"%"
+	</select>
+	
+	<select id="getTotalCountInUpper" resultType="int">
+		select count(*) from goods g where g.fullname like "%"#{0}"%" and g.uppertag=#{1}
+	</select>
+	
+	<select id="getTotalCountInMiddle" resultType="int">
+		select count(*) from goods g where g.fullname like "%"#{0}"%" and g.middletag=#{1}
+	</select>
+	
+	<select id="getTotalCountInLower" resultType="int">
+		select count(*) from goods g where g.fullname like "%"#{0}"%" and g.lowertag=#{1}
+	</select>
+
+	<select id="getGoodsByName"  resultType="com.lzh.entity.Goods">
+		select g.* from goods g where g.fullname like "%"#{0}"%" limit #{1},#{2}
+	</select>
+	
+	<select id="getGoodsByNameInUpper"  resultType="com.lzh.entity.Goods">
+		select g.* from goods g where g.fullname like "%"#{0}"%" and g.uppertag=#{1} limit #{2},#{3}
+	</select>
+	
+	<select id="getGoodsByNameInMiddle" resultType="com.lzh.entity.Goods">
+		select g.* from goods g where g.fullname like "%"#{0}"%" and g.middletag=#{1} limit #{2},#{3}
+	</select>
+	
+	<select id="getGoodsByNameInLower" resultType="com.lzh.entity.Goods">
+		select g.* from goods g where g.fullname like "%"#{0}"%" and g.lowertag=#{1} limit #{2},#{3}
+	</select>
+	
+	<update id="updateGoods" parameterType="com.lzh.entity.Goods">
+		update goods g set g.image=#{image}, g.fullname=#{fullname}, g.price=#{price}, g.stock=#{stock}, g.lowertag=#{lowerTag}, g.middletag=#{middleTag}, g.uppertag=#{upperTag} where g.id=#{id}
+	</update>
+	
+	<delete id="delGoodsById" parameterType="int">
+		delete from goods where goods.id=#{id}
+	</delete>
+	
+	<update id="setHot" >
+		update goods g set g.hot=#{0} where g.id=#{1}
+	</update>
+	
+	<update id="setSpecial" >
+		update goods g set g.special=#{0} where g.id=#{1}
+	</update>
+	
+	<select id="getHotGoodsRandomly" resultType="com.lzh.entity.Goods">
+		select g.* from goods g where g.hot=1 order by rand() limit 20 
+	</select>
+	
+	<select id="getSpecialGoodsRandomly" resultType="com.lzh.entity.Goods">
+		select g.* from goods g where g.special=1 order by rand() limit 4 
+	</select>
+	
+	<select id="getHotGoodsByNameRandomly" resultType="com.lzh.entity.Goods">
+		select g.* from goods g where g.fullname like "%"#{0}"%" and g.hot=1 order by rand() limit 5 
+	</select>
+	
+	<select id="getGoodsById" parameterType="int" resultType="com.lzh.entity.Goods">
+		select g.* from goods g where g.id=#{id}
+	</select>
+	
+</mapper>

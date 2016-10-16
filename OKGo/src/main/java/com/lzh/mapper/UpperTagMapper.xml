@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzh.dao.UpperTagMapper">
+	
+	<resultMap type="com.lzh.entity.UpperTag" id="upperTagResult">
+		<id column="uid" property="id"/>
+		<result column="utagname" property="tagName"/>
+		<collection property="middleTags" ofType="com.lzh.entity.MiddleTag"  >
+			<id column="mid" property="id"/>
+			<result column="mtagname" property="tagName"/>
+			<collection property="lowerTags" ofType="com.lzh.entity.LowerTag">
+				<id column="lid" property="id"/>
+				<result column="ltagname" property="tagName"/>
+			</collection>
+		</collection>
+	</resultMap>
+	
+	<select id="getAllTags" resultMap="upperTagResult">
+	 	select 
+			u.id as uid,
+			u.tagname as utagname,
+			m.id as mid,
+			m.tagname as mtagname,
+			l.id as lid,
+			l.tagname as ltagname
+			from uppertag u
+			left outer join middletag m
+			on u.id=m.uppertagid
+			left outer join lowertag l
+			on m.id=l.middletagid
+	</select>
+	
+	<select id="getUpperTagByTagName" resultType="com.lzh.entity.UpperTag" parameterType="string">
+		select u.* from uppertag u where u.tagname=#{uppertag}
+	</select>
+</mapper>
